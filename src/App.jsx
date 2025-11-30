@@ -1,93 +1,56 @@
-import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
-// Import Layout dan Pages
 import Layout from './layouts/Layout'
+// ... import pages lainnya ...
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import GalleryPage from './pages/GalleryPage'
 import GalleryDetailPage from './pages/GalleryDetailPage'
 import UploadPage from './pages/UploadPage'
+import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
 import NotFoundPage from './pages/NotFoundPage'
-import DashboardPage from './pages/DashboardPage'
-// Import Contexts/Services
 import ProtectedRoute from './contexts/ProtectedRoute';
-import { supabase } from './services/supabaseClient';
+import UpdatePasswordPage from './pages/UpdatePasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 function App() {
-  const [session, setSession] = useState(null);
-
-  // --- LOGIKA SESI SUPABASE ---
-  useEffect(() => {
-    // 1. Cek sesi yang tersimpan di localStorage saat aplikasi dimuat
-    const savedSession = localStorage.getItem('supabaseSession');
-    if (savedSession) {
-      try {
-        const parsedSession = JSON.parse(savedSession);
-        // Supabase akan secara otomatis memuat ulang sesi, kita hanya perlu mengatur state
-        setSession(parsedSession); 
-      } catch (e) {
-        console.error("Error parsing stored session:", e);
-        localStorage.removeItem('supabaseSession');
-      }
-    }
-
-    // 2. Pantau perubahan sesi secara real-time
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, newSession) => {
-      // Hanya simpan sesi jika event-nya adalah SIGNED_IN atau USER_UPDATED (dan ada sesi baru)
-      if (newSession && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
-        localStorage.setItem('supabaseSession', JSON.stringify(newSession));
-        setSession(newSession);
-      } 
-      
-      // Hapus sesi jika SIGNED_OUT atau sesi batal
-      else if (event === 'SIGNED_OUT' || !newSession) {
-        localStorage.removeItem('supabaseSession');
-        setSession(null);
-      }
-    });
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, []);
-
+  // HAPUS SEMUA STATE SESSION & USEEFFECT DISINI
+  // Kita percayakan sepenuhnya pada AuthProvider di main.jsx
 
   return (
     <Routes>
-      {/* Route Login dan Signup (Gunakan ProtectedRoute dengan requireAuth=false 
-          agar user yang sudah login tidak bisa mengakses lagi) */}
+      {/* PUBLIC ROUTES (Login/Signup) */}
+      {/* Tambahkan logika: Jika sudah login, redirect ke Home (GuestGuard) */}
       <Route element={<ProtectedRoute requireAuth={false} />}>
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignupPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/update-password" element={<UpdatePasswordPage />} />
       </Route>
 
-      {/* Semua halaman yang menggunakan layout utama */}
       <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="gallery" element={<GalleryPage />} />
-        
-        {/* Detail Gallery/Artwork (Akses Publik, Tidak perlu ProtectedRoute) */}
-        <Route path="gallery/:id" element={<GalleryDetailPage />} />
-        
-        {/* Route yang DI-PROTEKSI (Membutuhkan Login: requireAuth=true) */}
-        <Route element={<ProtectedRoute requireAuth={true} />}>
-          
-          {/* Dashboard Artist (Path yang diperbaiki) */}
-          <Route path="dashboard" element={<DashboardPage />} /> 
 
-          {/* Halaman Upload */}
-          <Route path="upload" element={<UploadPage />} />
-          
-          {/* Halaman Profil (Menggunakan ID) */}
+        {/* PROTECTED ROUTES (Wajib Login) */}
+        <Route element={<ProtectedRoute requireAuth={true} />}>
+          {/* Karena ada loading check di ProtectedRoute, halaman ini aman diakses */}
+          <Route path="gallery/:id" element={<GalleryDetailPage />} />
           <Route path="profile/:id" element={<ProfilePage />} />
-          
         </Route>
-        
-        {/* Route Catch-all untuk 404 */}
-        <Route path="*" element={<NotFoundPage />} />
+
+        {/* ARTIST ONLY */}
+        <Route element={<ProtectedRoute requireAuth={true} requireArtist={true} />}>
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="upload" element={<UploadPage />} />
+        </Route>
+
       </Route>
+      <Route path="*" element={<NotFoundPage />} />
+
+
+
     </Routes>
   )
 }

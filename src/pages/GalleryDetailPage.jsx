@@ -5,8 +5,8 @@ import { motion } from 'framer-motion'
 import { supabase } from '../services/supabaseClient'
 // Import komponen dummy untuk LikeButton dan CommentSection
 // CATATAN: Anda harus membuat komponen LikeButton dan CommentSection versi React/Vite/react-router-dom sendiri
-import LikeButton from '../components/LikeButton' 
-import CommentSection from '../components/CommentSection' 
+import LikeButton from '../components/LikeButton'
+import CommentSection from '../components/CommentSection'
 
 const GalleryDetailPage = () => {
     const { id } = useParams()
@@ -16,6 +16,11 @@ const GalleryDetailPage = () => {
     const [likesCount, setLikesCount] = useState(0)
     const [userHasLiked, setUserHasLiked] = useState(false)
     const [currentUser, setCurrentUser] = useState(null)
+    const { user } = useAuth();
+
+    if (!user) {
+        return <Navigate to="/" replace />;
+    }
 
     // --- FUNGSI UTAMA UNTUK MENGAMBIL DATA ---
     useEffect(() => {
@@ -56,7 +61,7 @@ const GalleryDetailPage = () => {
                 .eq('artwork_id', id)
                 .eq('user_id', user.id) // <-- Ini memerlukan otorisasi RLS yang tepat
                 .single()
-            
+
             setLikesCount(countData || 0)
 
             // 4. Cek apakah user sudah Like
@@ -69,7 +74,7 @@ const GalleryDetailPage = () => {
                     .single()
                 setUserHasLiked(!!likeData)
             }
-            
+
             setLoading(false)
         }
 
@@ -103,7 +108,7 @@ const GalleryDetailPage = () => {
     return (
         <div className="min-h-screen py-20 bg-gray-50 dark:bg-gray-900">
             <div className="container-custom max-w-6xl mx-auto px-6">
-                
+
                 {/* Breadcrumb */}
                 <nav className="flex py-3 mb-6 text-gray-600 dark:text-gray-400">
                     <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -123,7 +128,7 @@ const GalleryDetailPage = () => {
                     {/* Konten Utama (Media & Info) */}
                     <div className="lg:col-span-2">
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-6">
-                            
+
                             {/* Media Section */}
                             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
                                 {artwork.media_type === 'image' && (
@@ -152,7 +157,7 @@ const GalleryDetailPage = () => {
                                     <div><FiClock className="inline mr-2 text-blue-600" />{new Date(artwork.created_at).toLocaleDateString()}</div>
                                     <div><FiUser className="inline mr-2 text-blue-600" />{artist?.name || 'Unknown Artist'}</div>
                                 </div>
-                                
+
                                 {artwork.description && (
                                     <div className="mt-4">
                                         <h2 className="text-xl font-semibold mb-2">Deskripsi</h2>
@@ -160,9 +165,9 @@ const GalleryDetailPage = () => {
                                     </div>
                                 )}
                             </div>
-                            
+
                             {/* Comments Section */}
-                            <CommentSection 
+                            <CommentSection
                                 artworkId={artwork.id}
                                 userId={currentUser?.id}
                                 isAuthenticated={!!currentUser}
@@ -173,7 +178,7 @@ const GalleryDetailPage = () => {
                     {/* Sidebar (Artist Info & Action) */}
                     <div className="lg:col-span-1">
                         <motion.div className="sticky top-28 space-y-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
-                            
+
                             {/* Artist Info Card */}
                             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-md">
                                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Tentang Artist</h3>
@@ -190,7 +195,7 @@ const GalleryDetailPage = () => {
                                         <p className="text-sm text-gray-600 dark:text-gray-300">@{artist?.id.substring(0, 8)}...</p>
                                     </div>
                                 </div>
-                                
+
                                 <Link
                                     to={`/profile/${artist?.id}`}
                                     className="w-full py-2 text-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors border-t pt-4 block dark:border-gray-700"
@@ -202,7 +207,7 @@ const GalleryDetailPage = () => {
                             {/* Like & Actions Card */}
                             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-md">
                                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Aksi</h3>
-                                <LikeButton 
+                                <LikeButton
                                     artworkId={artwork.id}
                                     initialLiked={userHasLiked}
                                     initialCount={likesCount || 0}

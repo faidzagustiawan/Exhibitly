@@ -7,18 +7,23 @@ export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  // Tambahkan state loading
+  const [loading, setLoading] = useState(true) 
 
-  // Cek user saat pertama kali mount
   useEffect(() => {
-    const getUser = async () => {
+    const initializeAuth = async () => {
+      // 1. Cek User saat ini
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
+      setLoading(false) // Stop loading setelah cek selesai
     }
-    getUser()
 
-    // Supabase listener untuk update session
+    initializeAuth()
+
+    // 2. Listen perubahan auth
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null)
+      setLoading(false)
     })
 
     return () => {
@@ -32,17 +37,19 @@ export const AuthProvider = ({ children }) => {
       password,
     })
     if (error) throw error
-    setUser(data.user)
+    // Tidak perlu setUser manual di sini, karena onAuthStateChange akan menangkapnya
   }
 
   const logout = async () => {
     await supabase.auth.signOut()
-    setUser(null)
+    // setUser(null) ditangani oleh onAuthStateChange
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+    // Kirim state loading ke seluruh aplikasi
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
+      {/* Opsional: Render loading spinner global disini jika mau */}
+      {!loading && children} 
     </AuthContext.Provider>
   )
 }

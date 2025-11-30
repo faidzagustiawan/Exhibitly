@@ -12,7 +12,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(false);
 
-  
+
 
   const loginWithGoogle = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -31,23 +31,6 @@ const LoginPage = () => {
     }
   };
 
-  const loginWithFacebook = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'facebook',
-      options: {
-        redirectTo: 'https://YOUR_PROJECT_ID.supabase.co/auth/v1/callback',
-        queryParams: {
-          prompt: 'select_account', // Memaksa pemilihan akun setiap kali login
-        },
-      },
-    });
-
-    if (error) {
-      console.error('Login gagal:', error.message);
-    } else {
-      console.log('Login berhasil:', data);
-    }
-  };
 
 
 
@@ -89,7 +72,7 @@ const LoginPage = () => {
                 alt="Hutan hijau"
                 className="w-full h-auto rounded-xl"
               />
-              <div className="absolute inset-0 bg-linier-to-r from-primary-600/60 to-primary-800/60 rounded-xl flex items-center justify-center">
+              <div className="absolute inset-0 bg-linier-to-r from-gray-200/60 to-primary-800/60 rounded-xl flex items-center justify-center">
                 <div className="text-white text-center p-8">
                   <h2 className="text-3xl font-bold mb-4">Bergabung dengan Gerakan</h2>
                   <p className="text-lg text-white/90">
@@ -107,7 +90,7 @@ const LoginPage = () => {
           >
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
               <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold text-primary-800 dark:text-primary-200">
+                <h1 className="text-2xl font-bold text-gray-200 ">
                   Selamat Datang Kembali
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -173,22 +156,22 @@ const LoginPage = () => {
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-gray-200 focus:ring-primary-500 border-gray-300 rounded"
                     />
                     <label htmlFor="remember-me" onChange={(e) => setRememberMe(e.target.checked)} className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                       Ingat saya
                     </label>
                   </div>
 
-                  <a href="#" className="text-sm font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                  <Link to="/reset-password" className="text-sm font-medium text-gray-200 hover:text-green-500">
                     Lupa kata sandi?
-                  </a>
+                  </Link>
                 </div>
 
                 <div>
                   <button
                     type="submit"
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
                     disabled={loading}
                   >
                     {loading ? 'Memproses...' : 'Masuk'}
@@ -223,7 +206,7 @@ const LoginPage = () => {
               <div className="mt-8 text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Belum memiliki akun?{' '}
-                  <Link to="/signup" className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                  <Link to="/signup" className="font-medium text-gray-200 hover:text-green-500">
                     Daftar sekarang
                   </Link>
                 </p>

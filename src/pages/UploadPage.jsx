@@ -111,7 +111,7 @@ const UploadPage = () => {
             if (dbError) throw dbError
             
             // Navigasi setelah upload berhasil
-            navigate(`/artwork/${artwork.id}`)
+            navigate(`/gallery/${artwork.id}`)
 
         } catch (err) {
             console.error('Upload process failed:', err)

@@ -112,7 +112,7 @@ const Header = () => {
   const headerClasses = `fixed w-full top-0 z-50 transition-colors duration-300
     ${isScrolled
       ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-md'
-      : 'bg-gray-800' // Latar belakang awal sebelum scroll
+      : 'bg-transparent' // Latar belakang awal sebelum scroll
     }`
 
   return (

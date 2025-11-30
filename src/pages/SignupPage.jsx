@@ -126,7 +126,7 @@ const SignupPage = () => {
           >
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
               <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold text-primary-800 dark:text-primary-200">
+                <h1 className="text-2xl font-bold text-gray-200">
                   Buat Akun Baru
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -260,7 +260,7 @@ const SignupPage = () => {
                 <div>
                   <button
                     type="submit"
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading || !isValidName || !isValidEmail || !isValidPassword}
                   >
                     {loading ? 'Memproses...' : 'Daftar'}
@@ -302,7 +302,7 @@ const SignupPage = () => {
               <div className="mt-8 text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Sudah memiliki akun?{' '}
-                  <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                  <Link to="/login" className="font-medium text-gray-200 hover:text-green-500">
                     Masuk
                   </Link>
                 </p>

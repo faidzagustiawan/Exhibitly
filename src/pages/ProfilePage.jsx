@@ -183,7 +183,7 @@ const ProfilePage = () => {
 
     // --- TAMPILAN UTAMA ---
     return (
-        <div className="min-h-screen py-20 bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen py-40 bg-gray-50 dark:bg-gray-900">
             <div className="container-custom max-w-4xl mx-auto px-4">
                 
                 {/* Header Profil */}

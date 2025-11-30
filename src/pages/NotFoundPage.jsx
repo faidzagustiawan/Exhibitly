@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 
 const NotFoundPage = () => {
   return (
-    <div className="min-h-screen py-20 flex items-center">
+    <div className="min-h-screen bg-gray-200 dark:bg-gray-900 py-20 flex items-center">
       <div className="container-custom">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <motion.div
@@ -11,7 +11,7 @@ const NotFoundPage = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-primary-800 dark:text-primary-200 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-200 mb-4">
               404
             </h1>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
@@ -23,15 +23,9 @@ const NotFoundPage = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 to="/" 
-                className="btn-primary"
+                className="text-white p-4 border-2 border-white rounded-xl hover:bg-white hover:text-gray-900 transition"
               >
                 Kembali ke Beranda
-              </Link>
-              <Link 
-                to="/ecoact" 
-                className="btn-outline"
-              >
-                Jelajahi Kegiatan
               </Link>
             </div>
           </motion.div>
