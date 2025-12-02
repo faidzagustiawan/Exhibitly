@@ -52,7 +52,7 @@ const SignupPage = () => {
         options: {
           data: {
             name,
-            role: role === "artist" ? 2 : 1, // ⬅ simpan role
+              role: role === "artist" ? "artist" : "user",
           },
         },
       })
@@ -281,7 +281,7 @@ const SignupPage = () => {
                     onChange={(e) => setRole(e.target.value)}
                     className="block w-full pl-3 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none"
                   >
-                    <option value="enthusiast">Enthusiast</option>
+                    <option value="user">Enthusiast</option>
                     <option value="artist">Artist</option>
                   </select>
                 </div>
