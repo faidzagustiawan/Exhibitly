@@ -12,8 +12,9 @@ const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [role, setRole] = useState("enthusiast") // ⬅ role dropdown
   const navigate = useNavigate();
+  const [role, setRole] = useState("enthusiast");
+
 
   // Validasi
   const isValidName = name.trim().length >= 3
@@ -29,9 +30,18 @@ const SignupPage = () => {
     e.preventDefault()
     setError(null)
 
-    if (!isValidName) return setError('Nama harus minimal 3 karakter')
-    if (!isValidEmail) return setError('Email tidak valid')
-    if (!isValidPassword) return setError('Password tidak memenuhi kriteria')
+    if (!isValidName) {
+      setError('Nama harus minimal 3 karakter')
+      return
+    }
+    if (!isValidEmail) {
+      setError('Email tidak valid')
+      return
+    }
+    if (!isValidPassword) {
+      setError('Password tidak memenuhi kriteria')
+      return
+    }
 
     setLoading(true)
 
@@ -56,7 +66,7 @@ const SignupPage = () => {
         }
       } else {
         alert('Pendaftaran berhasil!')
-        navigate("/")
+        navigate("/"); // redirect ke home
       }
     } catch (err) {
       console.error('Unexpected signup error:', err)
@@ -66,13 +76,13 @@ const SignupPage = () => {
     }
   }
 
+  console.log('SignUp Payload:', { email, password, name })
+
 
   return (
     <div className="min-h-screen py-20 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
       <div className="container-custom max-w-6xl">
         <div className="grid md:grid-cols-2 gap-8 items-center">
-
-          {/* LEFT IMAGE */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -89,14 +99,13 @@ const SignupPage = () => {
                 <div className="text-white text-center p-8">
                   <h2 className="text-3xl font-bold mb-4">Mulai Perjalanan Anda</h2>
                   <p className="text-lg text-white/90">
-                    Buat akun untuk bergabung dengan komunitas kreator & enthusiast.
+                    Buat akun untuk bergabung dengan ribuan relawan dan pendukung yang berkomitmen untuk Indonesia yang lebih hijau.
                   </p>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* FORM */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -108,74 +117,161 @@ const SignupPage = () => {
                   Buat Akun Baru
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
-                  Daftar dan mulai perjalanan kreatif Anda
+                  Mulai perjalanan Anda dengan Re-Enviro
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-
-                {/* NAME */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Nama Lengkap
                   </label>
                   <div className="relative">
-                    <FiUser className="absolute inset-y-0 left-0 ml-3 mt-3 text-gray-400" />
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <FiUser className="h-5 w-5 text-gray-400" />
+                    </div>
                     <input
+                      id="name"
+                      name="name"
                       type="text"
+                      autoComplete="name"
+                      required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Nama lengkap Anda"
-                      required
                     />
                   </div>
+                  <div className={`flex mt-3 -mb-2 items-center text-sm ${isValidName ? 'text-green-500 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                    <FiCheck className="mr-1 h-4 w-4" />
+                    <span>Minimal 3 karakter</span>
+                  </div>
+
                 </div>
 
-                {/* EMAIL */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Email
                   </label>
                   <div className="relative">
-                    <FiMail className="absolute inset-y-0 left-0 ml-3 mt-3 text-gray-400" />
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <FiMail className="h-5 w-5 text-gray-400" />
+                    </div>
                     <input
+                      id="email"
+                      name="email"
                       type="email"
+                      autoComplete="email"
+                      required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      placeholder="email@example.com"
-                      required
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 "
+                      placeholder="nama@email.com"
                     />
+                  </div>
+                  <div className={`flex mt-3 -mb-2 items-center text-sm ${isValidEmail ? 'text-green-500 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                    <FiCheck className="mr-1 h-4 w-4" />
+                    <span>Email Tidak Valid</span>
                   </div>
                 </div>
 
-                {/* PASSWORD */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Kata Sandi
                   </label>
                   <div className="relative">
-                    <FiLock className="absolute inset-y-0 left-0 ml-3 mt-3 text-gray-400" />
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <FiLock className="h-5 w-5 text-gray-400" />
+                    </div>
                     <input
+                      id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="block w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="block w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Buat kata sandi yang kuat"
-                      required
                     />
                     <button
                       type="button"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-500"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 text-gray-400"
                     >
-                      {showPassword ? <FiEyeOff /> : <FiEye />}
+                      {showPassword ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />}
                     </button>
+                  </div>
+
+                  {/* Validasi Password */}
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <div className={`flex items-center text-sm ${hasMinLength ? 'text-green-500 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                      <FiCheck className="mr-1 h-4 w-4" />
+                      <span>Minimal 8 karakter</span>
+                    </div>
+                    <div className={`flex items-center text-sm ${hasUppercase ? 'text-green-500 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                      <FiCheck className="mr-1 h-4 w-4" />
+                      <span>Huruf besar</span>
+                    </div>
+                    <div className={`flex items-center text-sm ${hasNumber ? 'text-green-500 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                      <FiCheck className="mr-1 h-4 w-4" />
+                      <span>Angka</span>
+                    </div>
+                    <div className={`flex items-center text-sm ${hasSpecialChar ? 'text-green-500 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                      <FiCheck className="mr-1 h-4 w-4" />
+                      <span>Karakter khusus</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* ROLE DROPDOWN */}
+                <div className="flex items-center">
+                  <input
+                    id="terms"
+                    name="terms"
+                    type="checkbox"
+                    required
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="terms" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                    Saya menyetujui{' '}
+                    <a href="#" className="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                      Syarat dan Ketentuan
+                    </a>{' '}
+                    serta{' '}
+                    <a href="#" className="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                      Kebijakan Privasi
+                    </a>
+                  </label>
+                </div>
+
+                <div>
+                  <button
+                    type="submit"
+                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={loading || !isValidName || !isValidEmail || !isValidPassword}
+                  >
+                    {loading ? 'Memproses...' : 'Daftar'}
+                  </button>
+                  {error && (
+                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                      {error}
+                    </p>
+                  )}
+                </div>
+              </form>
+
+              <div className="mt-8">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                      Atau daftar dengan
+                    </span>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Daftar sebagai
@@ -189,35 +285,7 @@ const SignupPage = () => {
                     <option value="artist">Artist</option>
                   </select>
                 </div>
-
-                {/* TERMS */}
-                <div className="flex items-center">
-                  <input
-                    id="terms"
-                    name="terms"
-                    type="checkbox"
-                    required
-                    className="h-4 w-4 text-primary-600"
-                  />
-                  <label htmlFor="terms" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                    Saya menyetujui Syarat & Ketentuan
-                  </label>
-                </div>
-
-                {/* SUBMIT BUTTON */}
-                <button
-                  type="submit"
-                  disabled={loading || !isValidName || !isValidEmail || !isValidPassword}
-                  className="w-full py-3 rounded-lg text-white bg-gray-600 hover:bg-gray-700 disabled:opacity-50"
-                >
-                  {loading ? "Memproses..." : "Daftar"}
-                </button>
-
-                {error && (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
-                )}
-
-              </form>
+              </div>
 
               <div className="mt-8 text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -227,7 +295,6 @@ const SignupPage = () => {
                   </Link>
                 </p>
               </div>
-
             </div>
           </motion.div>
         </div>
