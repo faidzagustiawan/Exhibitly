@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { FiClock, FiChevronRight, FiHeart, FiUser } from 'react-icons/fi' // Diubah ikon agar relevan dengan artwork
+import { useParams, Link, useNavigate, Navigate } from 'react-router-dom' // Added Navigate
+import { FiClock, FiChevronRight, FiHeart, FiUser } from 'react-icons/fi'
 import { motion } from 'framer-motion'
 import { supabase } from '../services/supabaseClient'
-// Import komponen dummy untuk LikeButton dan CommentSection
-// CATATAN: Anda harus membuat komponen LikeButton dan CommentSection versi React/Vite/react-router-dom sendiri
+// Asumsi: useAuth ada di folder contexts. Jika ada di hooks, ubah path-nya.
+import { useAuth } from '../contexts/AuthContext' 
+
 import LikeButton from '../components/LikeButton'
 import CommentSection from '../components/CommentSection'
 
@@ -16,8 +17,11 @@ const GalleryDetailPage = () => {
     const [likesCount, setLikesCount] = useState(0)
     const [userHasLiked, setUserHasLiked] = useState(false)
     const [currentUser, setCurrentUser] = useState(null)
+    
+    // Sekarang useAuth sudah didefinisikan lewat import di atas
     const { user } = useAuth();
 
+    // Navigate sekarang akan berfungsi karena sudah diimport
     if (!user) {
         return <Navigate to="/" replace />;
     }
@@ -43,7 +47,6 @@ const GalleryDetailPage = () => {
 
             if (error || !artworkData) {
                 console.error('Gagal memuat artwork:', error)
-                // Mengarahkan ke halaman 404 jika tidak ditemukan
                 navigate('/404', { replace: true })
                 return
             }
@@ -51,26 +54,30 @@ const GalleryDetailPage = () => {
             setArtwork(artworkData)
 
             // 2. Ambil data user saat ini
-            const { data: { user } } = await supabase.auth.getUser()
-            setCurrentUser(user)
+            // OPTIMISASI: Karena Anda sudah punya 'user' dari useAuth, 
+            // baris di bawah ini sebenarnya redundan, tapi tidak error.
+            // Anda bisa langsung menggunakan 'user' dari useAuth untuk setCurrentUser.
+            const { data: { user: authUser } } = await supabase.auth.getUser()
+            setCurrentUser(authUser)
 
             // 3. Ambil jumlah Likes
             const { count: countData } = await supabase
                 .from('likes')
                 .select('*', { count: 'exact', head: true })
                 .eq('artwork_id', id)
-                .eq('user_id', user.id) // <-- Ini memerlukan otorisasi RLS yang tepat
+                // Hati-hati: pastikan user.id ada sebelum query ini jalan
+                .eq('user_id', authUser?.id) 
                 .single()
 
             setLikesCount(countData || 0)
 
             // 4. Cek apakah user sudah Like
-            if (user) {
+            if (authUser) {
                 const { data: likeData } = await supabase
                     .from('likes')
                     .select('id')
                     .eq('artwork_id', id)
-                    .eq('user_id', user.id)
+                    .eq('user_id', authUser.id)
                     .single()
                 setUserHasLiked(!!likeData)
             }
@@ -78,8 +85,10 @@ const GalleryDetailPage = () => {
             setLoading(false)
         }
 
-        fetchArtworkDetail()
-    }, [id, navigate])
+        if (user) { // Pastikan fetch hanya jalan jika user ada
+            fetchArtworkDetail()
+        }
+    }, [id, navigate, user]) // Tambahkan user ke dependency array
 
     if (loading) {
         return (
@@ -90,11 +99,9 @@ const GalleryDetailPage = () => {
     }
 
     if (!artwork) {
-        // Redirect sudah ditangani di useEffect
         return null;
     }
 
-    // Menggunakan data artist dari hasil join
     const artist = artwork.users;
 
     const categoryColorClass = {
@@ -107,8 +114,8 @@ const GalleryDetailPage = () => {
 
     return (
         <div className="min-h-screen py-20 bg-gray-50 dark:bg-gray-900">
+            {/* ... Sisa kode render UI Anda sama persis ... */}
             <div className="container-custom max-w-6xl mx-auto px-6">
-
                 {/* Breadcrumb */}
                 <nav className="flex py-3 mb-6 text-gray-600 dark:text-gray-400">
                     <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -137,7 +144,6 @@ const GalleryDetailPage = () => {
                                 {artwork.media_type === 'video' && (
                                     <video src={artwork.media_url} controls className="w-full h-auto" />
                                 )}
-                                {/* Tambahkan handler untuk media type lain jika diperlukan */}
                             </div>
 
                             {/* Detail Text */}
@@ -212,7 +218,6 @@ const GalleryDetailPage = () => {
                                     initialLiked={userHasLiked}
                                     initialCount={likesCount || 0}
                                     isAuthenticated={!!currentUser}
-                                    // Callback untuk memperbarui state di komponen induk
                                     onToggle={(newLiked, newCount) => {
                                         setUserHasLiked(newLiked);
                                         setLikesCount(newCount);
